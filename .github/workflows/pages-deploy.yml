@@ -56,8 +56,7 @@ jobs:
       - name: Copy Bootstrap SCSS
         run: |
           mkdir -p _sass/vendors
-          cp node_modules/bootstrap/scss/*.scss _sass/vendors/
-          cp node_modules/bootstrap/scss/vendor/_rfs.scss _sass/vendors/
+          cp -r node_modules/bootstrap/scss/* _sass/vendors/
 
       - name: Build site
         run: bundle exec jekyll b -d "_site${{ steps.pages.outputs.base_path }}"
