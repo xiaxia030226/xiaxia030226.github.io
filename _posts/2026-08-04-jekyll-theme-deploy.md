@@ -1,6 +1,6 @@
 ---
 title: Jekyll主题网站部署
-date: 2026-08-04 12:00:00 +0800
+date: 2026-08-04 00:00:00 +0800
 categories: [教程]
 tags: [Jekyll, GitHub Pages, Chirpy, 部署]
 ---
