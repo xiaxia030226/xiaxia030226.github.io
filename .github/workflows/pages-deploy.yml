@@ -45,6 +45,20 @@ jobs:
           ruby-version: 3.4
           bundler-cache: true
 
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Copy Bootstrap SCSS
+        run: |
+          mkdir -p _sass/vendors
+          cp node_modules/bootstrap/scss/*.scss _sass/vendors/
+          cp node_modules/bootstrap/scss/vendor/_rfs.scss _sass/vendors/
+
       - name: Build site
         run: bundle exec jekyll b -d "_site${{ steps.pages.outputs.base_path }}"
         env:
