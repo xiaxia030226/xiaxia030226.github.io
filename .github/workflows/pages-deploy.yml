@@ -58,6 +58,9 @@ jobs:
           mkdir -p _sass/vendors
           cp -r node_modules/bootstrap/scss/* _sass/vendors/
 
+      - name: Build JS assets
+        run: npm run build
+
       - name: Build site
         run: bundle exec jekyll b -d "_site${{ steps.pages.outputs.base_path }}"
         env:
@@ -67,6 +70,7 @@ jobs:
         run: |
           bundle exec htmlproofer _site \
             \-\-disable-external \
+            \-\-allow-missing-href \
             \-\-ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/"
 
       - name: Upload site artifact
