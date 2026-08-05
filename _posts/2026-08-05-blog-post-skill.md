@@ -11,14 +11,14 @@ tags: [CodeBuddy, Skill, 博客, 自动化, Jekyll]
 
 将 `SKILL.md` 放入 `~/.codebuddy/skills/blog-post/` 目录下即可使用：
 
-[下载 blog-post SKILL.md](/assets/downloads/blog-post-skill.md)
+[下载 blog-post SKILL.md](/assets/downloads/blog-post-skill.txt)
 
 ---
 
 也可以直接复制以下链接：
 
 ```
-https://xiaxia030226.github.io/assets/downloads/blog-post-skill.md
+https://xiaxia030226.github.io/assets/downloads/blog-post-skill.txt
 ```
 
 ## 使用方式
