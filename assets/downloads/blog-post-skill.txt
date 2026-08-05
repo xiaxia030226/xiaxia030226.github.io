@@ -110,6 +110,17 @@ Generate appropriate tags based on the code content (e.g., Unity, C#, design pat
 After writing the file, summarize what was created and ask the user if they want to
 push. Only push if the user explicitly confirms.
 
+When committing, use conventional commit format (the project has commitlint configured):
+```
+type: description
+```
+Common types: `docs` (blog posts, articles), `feat` (new features), `fix` (corrections).
+
+Examples:
+- `docs: 新增工作问题记录 - OnMouseDown`
+- `feat: 新增开发日记 2.C#对象池`
+- `docs: 修复skill下载文件后缀`
+
 ## Interaction Pattern
 
 The user will provide information in a conversational way, such as:
