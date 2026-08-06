@@ -1,22 +1,9 @@
 ---
-name: blog-post
-description: >
-  This skill should be used when adding a new article to the user's Jekyll blog (xxHtml project).
-  It automatically determines the next article number for a given category, reads code files
-  from the Unity project (xx) for analysis, and creates a properly formatted Markdown post.
-  Trigger when the user wants to write a dev diary, add a blog post, document code modules,
-  or create new articles under any blog category.
+name: create-blog-post
+description: Create new blog posts in a Jekyll Chirpy blog by analyzing Unity C# code modules, auto-numbering articles by category, and optionally pushing to GitHub. Use when the user wants to create a development diary post, add a blog article about Unity code, or publish an analysis of a code module.
 ---
 
-# Blog Post Creation Skill
-
-## Purpose
-
-Create new blog posts in the user's Jekyll + Chirpy blog located at:
-`c:\project\newStart\xxHtml\xiaxia030226.github.io\_posts\`
-
-The blog sits alongside a Unity game project at `c:\project\newStart\xx\`, and most
-articles analyze code modules from that Unity project.
+# Create Blog Post
 
 ## Blog Configuration
 
@@ -26,14 +13,15 @@ articles analyze code modules from that Unity project.
 | Posts directory | `c:\project\newStart\xxHtml\xiaxia030226.github.io\_posts\` |
 | File naming | `YYYY-MM-DD-slug.md` |
 | Permalink | `/posts/:title/` |
-| Categories | Defined dynamically in front matter |
 | Language | `zh-CN` |
 | Timezone | `Asia/Shanghai` (+0800) |
 | Git remote | `https://github.com/xiaxia030226/xiaxia030226.github.io` |
+| Unity project root | `C:\project\newStart\xx\` |
 
-## Article Front Matter Format
+## Front Matter Format
 
 Every post must use this front matter:
+
 ```yaml
 ---
 title: 编号.标题
@@ -43,39 +31,27 @@ tags: [tag1, tag2, ...]
 ---
 ```
 
-The date should always be the current date (today).
+Date is always the current date. The `title` field format is `编号.标题` (e.g., `1.基础框架-单例模板`, `2.C#对象池`).
 
-## Article Title & Numbering
+## Article Numbering
 
-The `title` field format is `编号.标题` (e.g., `1.基础框架-单例模板`, `2.C#对象池`).
+To determine the next number for a category:
 
-**To determine the next number for a category:**
-1. Search all `*.md` files in `_posts/` directory
+1. Read all `*.md` files in `_posts/` directory
 2. Parse each file's front matter `categories` field
 3. Filter posts belonging to the target category
 4. Extract the number prefix from each post's `title` field
-5. The next number = max existing number + 1
+5. Next number = max existing number + 1 (start at 1 if no existing posts)
 
-## Content Generation Workflow
-
-When the user provides:
-- **Category** (e.g., "个人项目开发日记")
-- **Title** (e.g., "C#对象池", without the number prefix)
-- **Code folder path** (the folder whose code should be analyzed)
-
-Follow this workflow:
+## Workflow
 
 ### Step 1: Determine the next number
 
-Read all existing `_posts/*.md` files. For each post whose `categories` front matter
-matches the target category, extract the leading number from `title`. The new article
-number = (max found) + 1. If no existing posts in the category, start at 1.
+Read all existing `_posts/*.md` files, parse front matter, find the highest number for the target category.
 
 ### Step 2: Read the code files
 
-Read every `.cs` file in the specified Unity project folder (ignoring `.meta` files).
-The Unity project root is `C:\project\newStart\xx\`. Understand each file's purpose
-and structure.
+Read every `.cs` file in the specified Unity project folder (ignore `.meta` files). Understand each file's purpose and structure.
 
 ### Step 3: Generate the article content
 
@@ -84,8 +60,7 @@ For each code file, create a section with:
 - A code block showing the full source
 - Key points explaining the design decisions, patterns used, and important details
 
-If the user mentions specific problems or insights (e.g., "generics constraint issue",
-"Stack vs List"), include a dedicated "编写中遇到的问题" section after the file walkthrough.
+If the user mentions specific problems or insights (e.g., "generics constraint issue", "Stack vs List"), include a dedicated "编写中遇到的问题" section after the file walkthrough.
 
 Content guidelines:
 - Write in Chinese (zh-CN)
@@ -95,37 +70,66 @@ Content guidelines:
 - Do NOT add "后续计划" (future plans) sections unless the user explicitly asks
 - No emojis
 
+### Writing Style
+
+Adopt a **developer notebook** tone — natural and first-person, but with restrained wording. Strike a balance between textbook formality and casual chat.
+
+**Good examples (natural but professional):**
+- "struct 是值类型，分配在栈上，不会像 class 那样频繁触发堆分配和 GC"
+- "我把 Transform 拆成了三个独立组件，遵循 ECS 一个组件只做一件事的原则"
+- "所有 AI 状态集中在一个 struct 中，通过 AIBehavior 枚举区分行为类型"
+
+**Avoid — too casual/slangy:**
+- "说到底就一句话", "搁栈上就完事了", "野指针"
+- "被干掉", "手里还捏着", "该有的都有了"
+- "省得弹幕回头把自己人打了", "绕圈圈的东西"
+
+**Avoid — too formal/textbook:**
+- "Entity 作为高频创建和传递的标识符，struct 值类型分配在栈上，避免了 class 带来的堆分配和 GC 压力"
+- "两个文件共同构成了项目 ECS 架构的数据基石"
+
+**Rules of thumb:**
+- Use first-person ("我") when describing design decisions
+- Write short, direct sentences
+- Avoid slang, dialect, and overly casual particles (嘛, 吧, 呗, 啥, 咋)
+- Avoid grandiose terms (基石, 核心在于, 至关重要)
+- Keep technical precision; conversational doesn't mean imprecise
+
 ### Step 4: Write the file
 
-Create the Markdown file at the path:
+Create the Markdown file at:
+
 ```
 c:\project\newStart\xxHtml\xiaxia030226.github.io\_posts\YYYY-MM-DD-{slug}.md
 ```
-The slug should be `dev-diary-{N}` where N is the article number.
+
+For development diary posts, slug should be `dev-diary-{N}` where N is the article number.
 
 Generate appropriate tags based on the code content (e.g., Unity, C#, design patterns, etc.).
 
 ### Step 5: Confirm and offer to push
 
-After writing the file, summarize what was created and ask the user if they want to
-push. Only push if the user explicitly confirms.
+After writing the file, summarize what was created and ask the user if they want to push. Only push if the user explicitly confirms.
 
-When committing, use conventional commit format (the project has commitlint configured):
-```
-type: description
-```
-Common types: `docs` (blog posts, articles), `feat` (new features), `fix` (corrections).
+## Git Commit & Push
 
-Examples:
+When the user confirms push, execute in the blog repository:
+
+1. Stage: `git add _posts/YYYY-MM-DD-slug.md`
+2. Commit using conventional commit format (project uses `@commitlint/config-conventional`):
+   - `docs: description` — for blog posts/articles
+   - `feat: description` — for new features
+3. Push: `git push origin`
+
+Common commit message examples:
+- `docs: 新增开发日记 2.C#对象池`
 - `docs: 新增工作问题记录 - OnMouseDown`
-- `feat: 新增开发日记 2.C#对象池`
-- `docs: 修复skill下载文件后缀`
+- `feat: 新增开发日记 - EventCenter模块`
 
 ## Interaction Pattern
 
-The user will provide information in a conversational way, such as:
+The user provides information conversationally, such as:
 - "新增一篇开发日记，标题叫EventCenter，分析Singleton文件夹"
 - "在个人项目开发日记下加一篇文章，讲Pool模块"
 
-If any required information is missing (category, title, or folder path), ask the user
-for clarification before proceeding.
+If any required information is missing (category, title, or folder path), ask the user for clarification before proceeding.
